@@ -2,27 +2,28 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const jwt = require("jsonwebtoken");
+var bodyParser = require('body-parser')
 
-const User = db.admins;
+const User = db.usertables;
 const secretKey = "KwEmDJNvp5feSjWo2uCr";
+var jsonParser = bodyParser.json()
 
 router.get('/', (req,res) => {
 
     res.send("from login route rami");
 })
-
-router.post('/', (req,res) => {
-
+router.post('/', jsonParser ,  (req,res) => {
   let userData = req.body
-  console.log(req.body.password);
+  console.log(req.body);
 
-  User.findOne({ cin: userData.cin }, function(err, result) {
+  User.findOne({ email : userData.email }, function(err, result) {
     if (err) {
       res.send(err);
     } else {
+      console.log(result);
             if(!result)
             {
-                res.status(401).send("invalid cin");
+                res.status(401).send("invalid email");
             }
             else
             {
@@ -39,7 +40,8 @@ router.post('/', (req,res) => {
             }
     }
   });
-})
+});
+
 
 function verifyToken(req,res,next)
 {
@@ -62,5 +64,3 @@ function verifyToken(req,res,next)
 }
 
 module.exports = router;
-
-
